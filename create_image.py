@@ -1,5 +1,6 @@
 from PIL import Image, ImageTk
 import tkinter as tk
+import os
 
 class ImageManipulator:
     def __init__(self, image_path):
@@ -83,3 +84,48 @@ for i in range(20):
             manipulator.scale_image(current_scale)
             output_filename = f"{output_path}/scaled_image_{i + 1}.jpg"
             manipulator.save_image(output_filename)
+
+
+
+
+def create_gif(input_folder = 'scaled_images', output_file = 'output.gif', duration=500, loop=0):
+    """
+    Создает GIF-файл из изображений в указанной папке.
+
+    Параметры:
+    - input_folder: путь к папке с изображениями
+    - output_file: имя файла GIF-а, который будет создан
+    - duration: длительность отображения каждого кадра в миллисекундах (по умолчанию 500 мс)
+    - loop: количество повторений (0 для бесконечного цикла)
+    """
+    image_files = [f for f in os.listdir(input_folder) if f.endswith(('.png', '.jpg', '.jpeg', '.gif'))]
+
+    if not image_files:
+        print("В указанной папке нет подходящих изображений.")
+        return
+
+    images = []
+    for image_file in sorted(image_files):
+        image_path = os.path.join(input_folder, image_file)
+        img = Image.open(image_path)
+        images.append(img)
+
+    output_path = os.path.join(input_folder, output_file)
+
+    # Сохраняем GIF
+    images[0].save(
+        output_path,
+        save_all=True,
+        append_images=images[1:],
+        duration=duration,
+        loop=loop
+    )
+
+    print(f"GIF успешно создан и сохранен в {output_path}")
+
+# # Пример использования:
+# input_folder_path = "путь_к_вашей_папке"
+# output_gif_name = "output.gif"
+# create_gif(input_folder_path, output_gif_name)
+
+create_gif()
